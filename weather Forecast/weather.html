@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<style>
+
+</style>
+<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+<link rel="stylesheet" type="text/css" href="style.css">
+<body>
+<img src="weather.jpg" alt="Mountain View" style="width:304px;height:228px;float: left;" >
+
+
+<div class="fullscreen-bg">
+        <video loop muted autoplay poster="img/videoframe.jpg" class="fullscreen-bg__video">
+            <source src="http://ak7.picdn.net/shutterstock/videos/2726177/preview/stock-footage-abstract-cgi-motion-graphics-and-animated-background-with-sky-blue-clouds.mp4" type="video/mp4">
+        
+        </video>
+    </div>
+
+  
+
+<div ng-app="myApp" ng-controller="customersCtrl" ng-init="sum=0 " >
+
+<select ng-model="selectedState">
+<option ng-repeat="x in state" value="{{x.model}}">{{x.model}}</option>
+</select>
+
+ <button ng-click="myFunc(selectedState)">OK</button>
+
+<p style="text-align: center">Weather location: {{location}}</p>
+
+
+
+ <p>Current temperature:{{temp}} </p>
+ 
+
+<table style="color:blue">
+
+  <caption>Clouds:</caption>
+
+
+
+   <tr >
+    <td>Wind :</td>
+    <!--<td>{{main}}  {{speed}} m/s  ({{deg}})</td>-->
+    <td>{{wind}} </td>
+    </tr>
+
+   <tr > 
+    <td>Cloudiness :</td>
+    <td>{{description}} </td>
+   </tr> 
+
+
+   <tr > 
+    <td>Pressure :</td>
+    <td>{{Pressure}} hpa </td>
+    </tr>
+
+
+  <tr >
+    <td>Humidity :</td>
+    <td>{{Humidity}}</td>
+  </tr>
+
+
+   <tr > 
+    <td>Sunrise :</td>
+    <td>{{sunrise | date:'dd-MM-yyyy HH:mm'}} </td>
+    </tr>
+
+
+  <tr >
+    <td>Sunset :</td>
+     <td>{{sunset | date:'dd-MM-yyyy HH:mm'}} </td>-
+  </tr>
+
+  <tr >
+    <td>Geo Coords :</td>`
+    <td>{{coord}}</td>
+  </tr>
+
+
+ 
+
+
+</table>
+
+
+</div>
+
+<script>
+var app = angular.module('myApp', []);
+app.controller('customersCtrl', function($scope, $http) {
+   
+$scope.selectedState = "Delhi";
+
+
+    $scope.state = [
+        {model : "Delhi"},
+        {model : "Mumbai"},
+        {model : "Chennai"}
+    ];
+
+
+
+$scope.myFunc = function(selectedState) {
+      
+   
+
+    $http.get("http://api.openweathermap.org/data/2.5/weather?q= "+$scope.selectedState+"&appid=9ace580089d6695126617aa2a4ff5ed3")
+    .then(function (response) {
+
+      var zero = "0";
+    
+
+      $scope.temp = response.data.main.temp - 273.15 +"°C";
+
+
+      $scope.Pressure = response.data.main.pressure;
+
+      $scope.Humidity = response.data.main.humidity + "%";
+
+      $scope.lon = response.data.coord.lon;
+      $scope.lat = response.data.coord.lat;
+      $scope.coord = "[ "+ $scope.lon + " - " + $scope.lat +" ]";
+
+      $scope.speed = response.data.wind.speed;
+      $scope.deg = response.data.wind.deg;
+      $scope.wind =  $scope.speed + " m/s ("+ $scope.deg + ")";
+
+      $scope.main = response.data.weather.main;
+      $scope.description = response.data.weather[0].description;
+      
+      $scope.sunrise = response.data.sys.sunrise;
+      $scope.sunset = response.data.sys.sunset;
+
+      $scope.name = response.data.name;
+      $scope.country = response.data.sys.country;
+      $scope.location = $scope.name + "," + $scope.country;
+
+
+    });
+
+    };
+
+});
+</script>
+
+</body>
+</html>
+
